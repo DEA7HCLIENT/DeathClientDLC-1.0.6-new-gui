@@ -20,6 +20,22 @@ jobs:
         run: |
           f=$(find . -name 'settings.gradle*' -not -path './.git/*' | head -n1)
           echo "Found: $f"
-          echo "PROJECT_DIR=$(dirname "$f")" 
+          echo "PROJECT_DIR=$(dirname "$f")" >> "$GITHUB_ENV"
 
- 
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Build
+        working-directory: ${{ env.PROJECT_DIR }}
+        run: |
+          chmod +x gradlew
+          ./gradlew build
+
+      - name: Upload jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: jar
+          path: ${{ env.PROJECT_DIR }}/build/libs/*.jar
