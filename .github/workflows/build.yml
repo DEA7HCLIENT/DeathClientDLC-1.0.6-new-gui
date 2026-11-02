@@ -2,53 +2,42 @@ name: build
 
 on:
   push:
-    branches: [ main, master ]
-    tags: [ 'v*' ]
-  pull_request:
   workflow_dispatch:
-
-permissions:
-  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: DeathClientDLC
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
+      - name: Find project dir
+        id: find
+        run: |
+          f=$(find . -name settings.gradle -not -path './.git/*' | head -n1)
+          if [ -z "$f" ]; then
+            echo "settings.gradle not found"
+            find . -not -path './.git/*' | head -50
+            exit 1
+          fi
+          echo "dir=$(dirname "$f")" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
 
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: current
 
       - name: Build
+        working-directory: ${{ steps.find.outputs.dir }}
         run: gradle build --no-daemon --stacktrace
 
-      - name: Upload mod jar
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: DeathClientDLC
           path: |
-            DeathClientDLC/build/libs/*.jar
-            !DeathClientDLC/build/libs/*-sources.jar
-            !DeathClientDLC/build/libs/*-dev.jar
+           ${{ steps.find.outputs.dir }}/build/libs/*.jar
+           !${{ steps.find.outputs.dir }}/build/libs/*-sources.jar
           if-no-files-found: error
-
-      - name: Create release
-        if: startsWith(github.ref, 'refs/tags/v')
-        uses: softprops/action-gh-release@v2
-        with:
-          files: |
-            DeathClientDLC/build/libs/*.jar
-            !DeathClientDLC/build/libs/*-sources.jar
-            !DeathClientDLC/build/libs/
- 
