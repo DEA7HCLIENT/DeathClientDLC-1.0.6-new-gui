@@ -18,10 +18,8 @@ jobs:
           p=$(find unpacked -name gradle.properties | head -n1)
           sed -i 's/^loom_version=.*/loom_version=1.14-SNAPSHOT/; s/^fabric_api_version=.*/fabric_api_version=0.141.1+1.21.11/' "$p"
 
-      - name: Find project dir
-        id: find
-        run: |
-          f=$(find . -name settings.gradle -not -path './.git/*' | head -n1)
-          if [ -z "$f" ]; then
-            echo "settings.gradle not found"
-            find . -not -path '
+       - name: Find project dir
+  run: |
+    f=$(find . -name 'settings.gradle*' -not -path './.git/*' | head -n1)
+    echo "Found: $f"
+    echo "PROJECT_DIR=$(dirname "$f")" >> "$GITHUB_ENV"
