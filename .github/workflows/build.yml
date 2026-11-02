@@ -13,6 +13,9 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: DeathClientDLC
     steps:
       - uses: actions/checkout@v4
 
@@ -35,9 +38,9 @@ jobs:
         with:
           name: DeathClientDLC
           path: |
-            build/libs/*.jar
-            !build/libs/*-sources.jar
-            !build/libs/*-dev.jar
+            DeathClientDLC/build/libs/*.jar
+            !DeathClientDLC/build/libs/*-sources.jar
+            !DeathClientDLC/build/libs/*-dev.jar
           if-no-files-found: error
 
       - name: Create release
@@ -45,6 +48,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            build/libs/*.jar
-            !build/libs/*-sources.jar
-            !build/libs/*-dev.jar
+            DeathClientDLC/build/libs/*.jar
+            !DeathClientDLC/build/libs/*-sources.jar
+            !DeathClientDLC/build/libs/*-dev.jar
