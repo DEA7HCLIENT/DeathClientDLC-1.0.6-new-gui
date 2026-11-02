@@ -9,7 +9,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
+- name: Unzip project
+        run: |
+          z=$(find . -maxdepth 1 -name '*.zip' | head -n1)
+          echo "zip: $z"
+          unzip -oq "$z" -d unpacked
+          p=$(find unpacked -name gradle.properties | head -n1)
+          sed -i 's/^loom_version=.*/loom_version=1.14-SNAPSHOT/; s/^fabric_api_version=.*/fabric_api_version=0.141.1+1.21.11/' "$p"
       - name: Find project dir
         id: find
         run: |
