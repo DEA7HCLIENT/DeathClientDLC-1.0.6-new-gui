@@ -10,9 +10,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-    steps:
       - name: Unzip project
-        run: ...
+        run: |
+          for z in *.zip; do
+            [ -e "$z" ] && unzip -o "$z"
+          done
 
       - name: Find project dir
         run: |
