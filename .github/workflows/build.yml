@@ -50,4 +50,5 @@ jobs:
           files: |
             DeathClientDLC/build/libs/*.jar
             !DeathClientDLC/build/libs/*-sources.jar
-            !DeathClientDLC/build/libs/*-dev.jar
+            !DeathClientDLC/build/libs/
+ 
