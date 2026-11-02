@@ -20,4 +20,6 @@ jobs:
         run: |
           f=$(find . -name 'settings.gradle*' -not -path './.git/*' | head -n1)
           echo "Found: $f"
-          echo "PROJECT_DIR=$(dirname "$f")" >> "$GITHUB_ENV"
+          echo "PROJECT_DIR=$(dirname "$f")" 
+
+ 
