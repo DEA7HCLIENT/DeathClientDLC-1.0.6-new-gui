@@ -36,6 +36,10 @@ jobs:
           fi
           echo "DIR=$(dirname "$F")" >> "$GITHUB_ENV"
 
+      - name: Fix repositories mode
+        working-directory: ${{ env.DIR }}
+        run: sed -i 's/FAIL_ON_PROJECT_REPOS/PREFER_SETTINGS/' settings.gradle
+
       - name: Build
         working-directory: ${{ env.DIR }}
         run: gradle build --no-daemon
