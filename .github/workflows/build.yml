@@ -31,23 +31,4 @@ jobs:
           F=$(find . -name settings.gradle -not -path './.git/*' | head -n1)
           if [ -z "$F" ]; then
             echo "settings.gradle not found. Repo contents:"
-            find . -not -path './.git/*' | head -50
-            exit 1
-          fi
-          echo "DIR=$(dirname "$F")" >> "$GITHUB_ENV"
-
-      - name: Fix repositories mode
-        working-directory: ${{ env.DIR }}
-        run: sed -i 's/FAIL_ON_PROJECT_REPOS/PREFER_SETTINGS/' settings.gradle
-
-      - name: Build
-        working-directory: ${{ env.DIR }}
-        run: gradle build --no-daemon
-
-      - name: Upload mod jar
-        uses: actions/upload-artifact@v4
-        with:
-          name: NeverLoseBr0
-          path: |
-            ${{ env.DIR }}/build/libs/*.jar
-            !${{ env.DIR }}/build/libs/*-sources.jar
+            find . -not -pat
