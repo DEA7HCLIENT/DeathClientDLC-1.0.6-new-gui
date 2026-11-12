@@ -2,7 +2,6 @@ name: build
 
 on:
   push:
-    branches: [ main, master ]
   pull_request:
   workflow_dispatch:
 
@@ -18,13 +17,23 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      # There is no gradlew in the repo, so Gradle is installed by the action.
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: current
 
+      - name: Find project
+        run: |
+          F=$(find . -name settings.gradle -not -path './.git/*' | head -n1)
+          if [ -z "$F" ]; then
+            echo "settings.gradle not found. Repo contents:"
+            find . -not -path './.git/*' | head -50
+            exit 1
+          fi
+          echo "DIR=$(dirname "$F")" >> "$GITHUB_ENV"
+
       - name: Build
+        working-directory: ${{ env.DIR }}
         run: gradle build --no-daemon
 
       - name: Upload mod jar
@@ -32,6 +41,5 @@ jobs:
         with:
           name: NeverLoseBr0
           path: |
-            build/libs/*.jar
-            !build/libs/*-sources.jar
-            !build/libs/*-dev.jar
+            ${{ env.DIR }}/build/libs/*.jar
+            !${{ env.DIR }}/build/libs/*-sources.jar
