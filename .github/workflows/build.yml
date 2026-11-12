@@ -11,24 +11,27 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
 
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: current
 
       - name: Unzip project
-        run: |
-          for z in *.zip; do unzip -oq "$z"; done
+        run: unzip -oq "*.zip"
 
-      - name: Find project
-        run: |
-          F=$(find . -name settings.gradle -not -path './.git/*' | head -n1)
-          if [ -z "$F" ]; then
-            echo "settings.gradle not found. Repo contents:"
-            find . -not -pat
+      - name: Fix repositories mode
+        working-directory: NeverLoseBr0
+        run: sed -i 's/FAIL_ON_PROJECT_REPOS/PREFER_PROJECT/' settings.gradle
+
+      - name: Build
+        working-directory: NeverLoseBr0
+        run: gradle build --no-daemon
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: NeverLoseBr0
+          path: NeverLoseBr0/build/libs/*.jar
